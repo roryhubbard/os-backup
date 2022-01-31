@@ -1,0 +1,23 @@
+# take screenshot
+grim
+
+# record screen
+wf-recorder -f <file name>.mp4
+
+# play video
+mpv <file name>
+
+# view image
+imv <file name>
+
+# show webcam
+mpv /dev/video0 --gpu-context=wayland
+# configure webcam
+v4l2-ctl -d /dev/video0 --list-ctrls
+
+# update firmware
+fwupdmgr refresh && fwupdmgr get-updates && fwupdmgr update
+
+# remove uneeded packages
+sudo pacman -Rns $(pacman -Qdtq)
+
