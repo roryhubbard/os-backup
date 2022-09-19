@@ -17,7 +17,7 @@ set softtabstop=2
 set shiftwidth=2 " number of spaces to use for auto indent
 set autoindent " copy indent from current line when starting a new line
 
-colorscheme gruvbox
+#colorscheme everforest
 set bg=dark
 
 let g:python_recommended_style = 0
