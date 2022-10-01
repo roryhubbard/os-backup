@@ -1,0 +1,18 @@
+[submodule ".vim/pack/plugins/start/everforest"]
+	path = .vim/pack/plugins/start/everforest
+	url = https://github.com/sainnhe/everforest.git
+[submodule ".vim/pack/plugins/start/fzf"]
+	path = .vim/pack/plugins/start/fzf
+	url = https://github.com/junegunn/fzf.git
+[submodule ".vim/pack/plugins/start/julia-vim"]
+	path = .vim/pack/plugins/start/julia-vim
+	url = https://github.com/JuliaEditorSupport/julia-vim.git
+[submodule ".vim/pack/plugins/start/nightfox.nvim"]
+	path = .vim/pack/plugins/start/nightfox.nvim
+	url = https://github.com/EdenEast/nightfox.nvim.git
+[submodule ".vim/pack/plugins/start/scrollbar.nvim"]
+	path = .vim/pack/plugins/start/scrollbar.nvim
+	url = https://github.com/Xuyuanp/scrollbar.nvim.git
+[submodule ".vim/pack/plugins/start/vim-cpp-modern"]
+	path = .vim/pack/plugins/start/vim-cpp-modern
+	url = https://github.com/bfrg/vim-cpp-modern.git
