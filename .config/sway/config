@@ -19,15 +19,19 @@ set $term alacritty
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
 # set $menu dmenu_path | dmenu | xargs swaymsg exec --
-set $menu bemenu-run
+# set $menu bemenu-run
+# Application launcher with fzf
+set $menu exec $term --class=launcher -e bash -c 'compgen -c | grep -v fzf | sort -u | fzf --layout=reverse | xargs -r swaymsg -t command exec'
+# Windows config
+for_window [app_id="^launcher$"] floating enable, border none, opacity 0.8
 # Your preferred browser
-#set $browser google-chrome-stable
-set $browser firefox
+#set $browser firefox
+set $browser google-chrome-stable --enable-features=UseOzonePlatform --ozone-platform=wayland
 
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /home/chub/pictures/montana.jpg fill
+output * bg /usr/share/backgrounds/sway/montana.jpg fill
 #
 # Example configuration:
 #
@@ -70,8 +74,8 @@ exec swayidle -w \
 input type:keyboard {
     #xkb_layout us
     #xkb_model pc105
-    repeat_delay 300
-    repeat_rate 50
+    repeat_delay 250
+    repeat_rate 60
 }
 
 input type:touchpad {
@@ -87,7 +91,7 @@ input type:touchpad {
     bindsym $mod+Return exec $term
 
     # Start browser
-    bindsym $mod+Shift+b exec $browser
+    bindsym $mod+Shift+b exec MOZ_ENABLE_WAYLAND=1 $browser
 
     # Kill focused window
     bindsym $mod+Shift+q kill
@@ -224,22 +228,24 @@ exec mkfifo $WOBSOCK && tail -f $WOBSOCK | wob
 #
 # Special Keys
 #
-bindsym XF86AudioMute exec pamixer --toggle-mute && (pamixer --get-mute && echo 0 > $WOBSOCK) || pamixer --get-volume > $WOBSOCK
-bindsym XF86AudioLowerVolume exec pamixer -ud 2 && pamixer --get-volume > $WOBSOCK
-bindsym XF86AudioRaiseVolume exec pamixer -ui 2 && pamixer --get-volume > $WOBSOCK
-bindsym XF86AudioPlay exec playerctl play-pause
-bindsym XF86MonBrightnessDown exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-bindsym XF86MonBrightnessUp exec brightnessctl set +1% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-bindsym Print exec grim -g "$(slurp)" screenshot.png
+#bindsym XF86AudioMute exec pamixer --toggle-mute && (pamixer --get-mute && echo 0 > $WOBSOCK) || pamixer --get-volume > $WOBSOCK
+#bindsym XF86AudioLowerVolume exec pamixer -ud 2 && pamixer --get-volume > $WOBSOCK
+#bindsym XF86AudioRaiseVolume exec pamixer -ui 2 && pamixer --get-volume > $WOBSOCK
+#bindsym XF86AudioPlay exec playerctl play-pause
+#bindsym XF86MonBrightnessDown exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+#bindsym XF86MonBrightnessUp exec brightnessctl set +1% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+##bindsym XF86MonBrightnessDown exec light -U 5 && light -G | cut -d'.' -f1 > $WOBSOCK.wob
+##bindsym XF86MonBrightnessUp exec light -A 5 && light -G | cut -d'.' -f1 > $WOBSOCK.wob
+#bindsym Print exec grim -g "$(slurp)" screenshot.png
 
-#bindsym F1 exec pamixer --toggle-mute && (pamixer --get-mute && echo 0 > $WOBSOCK) || pamixer --get-volume > $WOBSOCK
-#bindsym F2 exec pamixer -ud 2 && pamixer --get-volume > $WOBSOCK
-#bindsym F3 exec pamixer -ui 2 && pamixer --get-volume > $WOBSOCK
-#bindsym F4 exec playerctl play-pause
-#bindsym F5 exec [ $(brightnessctl --device="dell::kbd_backlight" get) -eq 0 ] && brightnessctl --device="dell::kbd_backlight" set $(brightnessctl --device="dell::kbd_backlight" max) || brightnessctl --device="dell::kbd_backlight" set 1-
-#bindsym F6 exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-#bindsym F7 exec brightnessctl set +1% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
-#bindsym F10 exec grim -g "$(slurp)" screenshot.png
+bindsym F1 exec pamixer --toggle-mute && (pamixer --get-mute && echo 0 > $WOBSOCK) || pamixer --get-volume > $WOBSOCK
+bindsym F2 exec pamixer -ud 2 && pamixer --get-volume > $WOBSOCK
+bindsym F3 exec pamixer -ui 2 && pamixer --get-volume > $WOBSOCK
+bindsym F4 exec playerctl play-pause
+bindsym F5 exec [ $(brightnessctl --device="dell::kbd_backlight" get) -eq 0 ] && brightnessctl --device="dell::kbd_backlight" set $(brightnessctl --device="dell::kbd_backlight" max) || brightnessctl --device="dell::kbd_backlight" set 1-
+bindsym F6 exec brightnessctl set 1%- | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+bindsym F7 exec brightnessctl set +1% | sed -En 's/.*\(([0-9]+)%\).*/\1/p' > $WOBSOCK
+bindsym F10 exec grim -g "$(slurp)" screenshot.png
 
 #
 # Status Bar:
@@ -260,7 +266,7 @@ bar {
 # nag
 #
 set {
-  $nag exec swaynagmode
+  $nag exec swaynag
   $nag_exit $nag --exit
   $nag_confirm $nag --confirm
   $nag_select $nag --select
