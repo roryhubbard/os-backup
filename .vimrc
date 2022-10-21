@@ -17,8 +17,18 @@ set softtabstop=2
 set shiftwidth=2 " number of spaces to use for auto indent
 set autoindent " copy indent from current line when starting a new line
 
-#colorscheme everforest
+set undodir=~/.vimdid
+set undofile
+
+colorscheme everforest
 set bg=dark
 
 let g:python_recommended_style = 0
 
+" keybindings
+let mapleader = " "
+" set ctrl-j to esc for all modes
+map <C-j> <Esc>
+map! <C-j> <Esc>
+nmap <C-p> :Files<Enter>
+nmap <Leader>; :Buffers<Enter>
