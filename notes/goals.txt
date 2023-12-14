@@ -1,0 +1,25 @@
+< 6 month goals
+--------------------------------------------------------------------------------
+1) - objective: deploy launch land goto analyzer to Vision
+   - key result: every time a bag gets uploaded to Vision the analyzer runs
+2) - objective: get a simulation test to run on CI
+   - key result: can see that the test ran on CI after that last PR was merged
+     into master
+3) - objective: create some form of automated testing for AFWERX
+   - key result: > 1 test is run after running one command
+4) - objective: integrate >= 1 test from > 1 projects into roll-up
+   - key result: roll-up shows analysis on the tests
+
+Long Term
+--------------------------------------------------------------------------------
+1) Write an analyzer that can be used across projects and integrate that in our
+   automated processes.
+
+--------------------------------------------------------------------------------
+I think we discussed its helpful to declare a future title and person to aspire
+to match in skills.
+
+Title:
+principal engineer
+
+Person:

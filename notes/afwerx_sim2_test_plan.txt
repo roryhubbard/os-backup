@@ -1,0 +1,854 @@
+white paper 2
+https://aiformaneuver.sharepoint.us/:w:/s/AFWERXSWARM/EUSa5HmsW15Cu24F5zmGb3IBGaCBfrmCW4JL5T7sKaFfTg?e=ZhlAm9&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiIxNDU0LzIzMDkwMTEyMjI5IiwiSGFzRmVkZXJhdGVkVXNlciI6ZmFsc2V9
+
+
+
+
+
+
+
+
+
+feature list
+--------------------------------------------------------------------------------
+
+1) Communications graph
+https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+- slide 22
+https://aiformaneuver-my.sharepoint.us/:p:/g/personal/stefan_jorgensen_shield_ai/ETMABeu20pBDnKWwTbuqFqYBoaZb2EJfY0VeomxWbOj6Lw?e=UY7GEr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900934874&web=1
+- Given a user defined time window and connectivity constraint, autonomously
+  balance 'primary objectives' and 'communication objectives' to ensure that the
+  connectivity constraint is satisfied over the time window.
+
+2) Estimation
+https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+- slide 23
+- SERF
+- RADIO HAL block talks to radio firmware and sends SNR, latency... to
+  communications graph block
+- Zavlanos, M.M., Pappas, G.J.: Distributed connectivity control of mobile
+  networks. In: Proc. of the IEEE Conf. on Decision and Control, New Orleans,
+  LA, December 2007, pp. 3591– 3596 (2007)
+
+3) Predictions
+https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+- slide 24
+- develope RFLib which estimates the mapping of control actions to SNR and
+  network metrics
+
+4) Control
+https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+- slide 25
+- The MAEM is given a minimum degree and a time scale constraint as part of the
+  mission definition.
+  - A subset of agents can coordinate – for sim 2 coordination is done by
+    electing a leader (using UUIDs) and having the leader solve the assignment
+    problem for all agents. 
+- The SAEM is given a communications aware task which contains a combination of
+  rendezvous behaviors and other behaviors (e.g. area coverage, target follow).
+  - Component responsible for determining which behavior is currently active 
+  - We are primarily focused on balancing rendezvous tasks with a ‘primary’ task
+- The BM is given a specific behavior to execute and provides an API for
+  estimating completion time.
+  - For sim 2 our primary focus is to extend our sim 1 rendezvous behavior so it
+    can be interleaved with other behaviors.  This will involve predicting where
+    the robot will be in the future (according to the current behavior), and
+    then selecting a rendezvous point that will be convenient for both agents
+    near that time
+  - The second focus for sim 2 behaviors is bearing based search
+- The MM provides a Dubins path oracle that helps the BM refine time estimates
+  for a given path
+
+5) Motion Manager
+https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+- slide 26
+- dubins path planner
+- motion manager is an oracle for estimating completion time of a path
+- In order to profit from the ~5dB gain of the dipole antennas at 0 elevation,
+  we need motion manager to coordinate wing dips (a form of formation flight)
+
+6) Behavior Manager
+https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+- slide 27
+- Comms Anchor (from sim 1): we can expand to support relay/intermittent link
+  with the GCS; multiple jammers
+- Comms Relay (from sim 1): we can expand to support > 2 neighbors
+- Rendezvous (new for sim 2): Given another agent ID, travel to an established
+  rendezvous location. Requires always maintaining AHAs with other agents in the
+  team. Closely related to comms relay.
+- Understanding the expected execution time of a behavior is essential for
+  balancing communications objectives with primary objectives.
+
+7) SAEM
+https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+- slide 28
+- Given a rendezvous behavior, an agent ID with which to maintain communications
+  and a maximum window for communications drop, alternate between execution of
+  the Task subtree and the rendezvous behavior. This is a new subtree to be
+  optionally added to existing Tasks subtrees.
+
+8) MAEM
+https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+- slide 29
+- The MAEM is responsible for making and coordinating decisions at the team
+  level. Given the communications constraint (e.g. minimum degree over a time
+  period), subgraph membership, and a task pool the MAEM assigns agents to tasks
+  with rendezvous tasks that ensure connectivity over a time window
+- Start with a heuristic based implementation (gets us off the ground easy to
+  implement) but push toward a mixed-integer program formulation (e.g. VRPTW) in
+  phase 2.
+- Start with nominating a leader to solve the problem (phases 1 and 2) and move
+  toward a fully distributed solution (e.g. auction) in phase 3.
+
+9) RF Emitter Sensing and Tracking
+  - Develop sensor models with fidelity targeted to enable realistic track
+    uncertainty models, leveraging mature GFI (e.g., AFSIM) 
+  - Inform and execute common HME Object Tracking software development based on
+    Swarm tracking requirements 
+  - Create custom emitter tracking-related components as-needed for the Swarm
+    effort 
+  - To enable emitter localization behaviors, each agent will be equipped with a
+    low-cost ES sensor that detects RF emissions and estimates emitter signal
+    parameters. The ES measurements are be fed into a multi-agent Object Tracker
+    that fuses the measurements to produce emitter tracks. Finally, the emitter
+    tracks are made available to the Mapping and Behavior algorithms which will
+    plan against and optimize those emitter track uncertainties
+  - EMS emitters are ground-based and stationary
+  - Simulated ESM sensor data will be high-quality (e.g., 100% probability of
+    detection, infinite resolution, no false alarms, no bias, no actual noise,
+    etc.)
+  - Simulated ESM sensors will report an emitter ID for unambiguous association
+  - GTSAM ISAM2 library
+
+
+10) Eventually we want to let the data show how many aircraft we would need i.e.
+  can we establish a comms link with X amount of birds. Theres a value curve
+  about adding more aircraft. Would like to have a tool to calculate that.
+  - Willy
+
+
+
+
+
+
+
+
+
+requirements list
+--------------------------------------------------------------------------------
+
+Concur. See ADO for the requirements. User should be able to priortize emitters
+and choose the preferred latency.
+- Willy
+
+
+********************************************************************************
+2 Level 0: SWARM UAS Requirements
+********************************************************************************
+
+2.1 Aircraft Quantity
+The SWARM UAS shall support concurrent operation of quantity 3 (T) to 6 (O) aircraft.
+
+2.2 Aircraft Airworthiness
+The SWARM UAS shall operate the aircraft swarm with consideration towards:
+• Bingo fuel monitoring
+• Horizontal aircraft separation
+• Vertical aircraft separation
+• Altitude limitations
+
+2.3 Communications Preservation
+The SWARM UAS shall operate to maintain a nominal and continuous Communications,
+Command, and Control (C3) datalink between the GCS and the Aircraft.
+
+2.4 Communication Optimization
+The SWARM UAS shall coordinate multi-agent geometries to optimize communications.
+
+2.5 Communication of Target Information
+The SWARM UAS shall communicate Targets to the Operator(s).
+
+2.6 Denied Environment Operation
+The SWARM UAS shall maintain communications between the GCS and Aircraft within
+an RF denied environment.
+
+2.7 Simulation Operation
+The SWARM UAS shall be capable of operating in a simulated environment.
+
+
+********************************************************************************
+2.8 Level 1: SWARM V-BAT Requirements
+********************************************************************************
+
+2.8.1 V-BAT Configuration
+The SWARM UAV shall use a V-BAT Block A aircraft.
+
+2.8.2 V-BAT Location Reporting
+The SWARM V-BAT shall be capable of reporting its location (GPS Permissive).
+
+2.8.3 V-BAT Altitude Reporting
+The SWARM V-BAT shall be capable of reporting its altitude (GPS permissive).
+
+2.8.4 V-BAT Airspeed Reporting
+The SWARM V-BAT shall be capable of reporting its airspeed (GPS permissive).
+
+2.8.5 V-BAT EO/IR Payload
+The SWARM V-BAT configuration shall feature an EO/IR Payload.
+
+2.8.6 V-BAT ES Payload
+The SWARM V-BAT configuration shall feature an ES Payload.
+
+2.8.7 V-BAT Radio Payload
+The SWARM V-BAT configuration shall feature an IP based radio mesh network
+payload.
+
+
+********************************************************************************
+2.8.8 Level 2: EO/IR Requirements
+********************************************************************************
+
+2.8.8.1 EO/IR Target of Interest Location
+The SWARM EO/IR shall be capable of determining coordinate data for a Target.
+
+2.8.8.2 EO/IR Target of Interest Imaging
+The SWARM EO/IR shall be capable of capturing imagery of a Target.
+
+2.8.8.3 EO/IR Range
+The SWARM EO/IR shall capture target imagery when within 2 nmi of a Target.
+
+
+********************************************************************************
+2.8.9 Level 2: ES Requirements
+********************************************************************************
+
+2.8.9.1 ES Payload Compliance
+The SWARM ES Payload shall comply with the Mod Payload design standard.
+
+2.8.9.2 ES Payload Frequency Detection
+The SWARM ES Payload shall detect in a frequency band of the Comms Jammer. 
+
+2.8.9.3 ES Payload Detection Modes
+The SWARM ES Payload shall support the following modes of detection:
+• Frequency Sweep within the supported range
+• Fixed Frequency search
+
+2.8.9.4 ES Payload Angle of Arrival
+The SWARM ES Payload shall detect an Angle of Arrival (AOA) of an RF Source.
+
+2.8.9.5 ES Payload Time Difference of Arrival
+The SWARM ES Payload shall support collaborative geolocation of an RF source
+location using Time Difference of Arrival (TDOA).
+
+2.8.9.6 ES Payload Frequency Difference of Arrival
+The SWARM ES Payload shall support collaborative geolocation of an RF source
+location using Frequency Difference of Arrival (FDOA).
+
+2.8.9.7 ES Payload Power Detection
+The SWARM ES Payload shall detect the power output of an RF Jammer.
+
+2.8.9.8 ES Payload Coherent Channels
+The SWARM ES Payload shall be capable of tracking four (4) coherent channels.
+
+2.8.9.9 ES Payload Antennas
+The SWARM ES Payload shall feature a minimum of 3 antennas (T).
+
+2.8.10Level 2: Radio Payload
+
+2.8.10.1 Radio Inter-Aircraft Communication
+The SWARM RF datalink shall support inter-aircraft communication.
+
+2.8.10.2 Radio Network Nodes
+The SWARM RF datalink shall be decentralized, capable of supporting a minimum of
+ten nodes.
+
+2.8.10.3 Radio Network Protocol
+The SWARM RF datalink shall be an Internet Protocol (IP) based data network.
+
+2.8.10.4 Radio Decentralization
+The SWARM RF datalink shall operate in a decentralized manner.
+
+2.8.10.5 Radio Frequenecy
+The SWARM RF datalink shall operate in the L-band or S-band frequency range.
+
+2.8.10.6 Radio Power
+The SWARM RF datalink power level shall be configurable.
+
+2.8.10.7 Radio Bandwidth
+The SWARM RF datalink bandwidth shall be configurable.
+
+2.8.10.8 Radio Quality of Service
+The SWARM RF datalink shall output a network Quality of Service (QoS).
+
+2.8.10.9 Radio Signal to Noise
+The SWARM RF datalink shall output a network Signal to Noise Ratio (SNR).
+
+2.8.10.10 Radio Transmission
+The SWARM RF datalink shall be capable of transmitting a Target's image and
+location.
+
+2.8.10.11 Radio GCS LOS Range
+The SWARM RF datalink shall have a LOS range from the GCS to V-BAT of ≥ 50 nmi.
+
+2.8.10.12 Radio V-BAT LOS RANGE
+The SWARM RF datalink shall have a LOS range from V-BAT to V-BAT of ≥ 10 nmi
+
+
+********************************************************************************
+2.9 Level 1: Hivemind Requirements
+********************************************************************************
+2.9.1 Hivemind Simulation Use
+The SWARM Hivemind shall be employed within the Simulation environment.
+
+2.9.2 Hivemind V-BAT Use
+The SWARM Hivemind shall be employed on V-BAT.
+
+2.9.3 Hivemind Decentralization
+The SWARM Hivemind shall operate in a decentralized manner.
+
+2.9.4 Hivemind Network Quality
+The SWARM Hivemind shall monitor the Quality of Service (QoS) of the RF datalink.
+
+2.9.5 Hivemind Noise Floor
+The SWARM Hivemind shall monitor the Signal to Noise Ratio (SNR) of the RF datalink.
+
+2.9.6 Hivemind Jam to Signal
+The SWARM Hivemind shall determine the Jam to Signal (J/S) ratio of an RF Jammer.
+
+2.9.7 Hivemind V-BAT Telemetry
+The SWARM Hivemind shall monitor V-BAT telemetry.
+
+2.9.8 Hivemind Single Aircraft Control
+The SWARM Hivemind shall support tasking of a single V-BAT aircraft.
+
+2.9.9 Hivemind Multi-Aircraft Control
+The SWARM Hivemind shall support tasking of multiple V-BAT aircraft.
+
+2.9.10Hivemind Survivability Assessment
+The SWARM Hivemind shall be capable of assessing the Survivability Risk Factor of
+an action.
+
+2.9.11Hivemind RF Datalink Management
+The SWARM Hivemind shall be capable of adjusting the RF datalink parameters based
+upon the assessed Survivability Risk Factors.
+NOTE: This capability will not be supported within the Simulation 1 test.
+
+2.9.12Hivemind RF Transmit Management
+The SWARM Hivemind shall be capable of determining when to transmit over the RF
+datalink based upon the assessed Survivability Risk Factors.
+
+2.9.13Hivemind Datalink Preservation
+The SWARM Hivemind shall be capable of maneuvering V-BAT aircraft to maintain an
+RF communications link.
+
+2.9.14Hivemind Jammer Location Determination
+The SWARM Hivemind shall be capable of maneuvering aircraft to collaboratively
+geolocate an RF Comms Jammer.
+
+2.9.15Hivemind Return-to-Base
+The SWARM Hivemind shall be capable of returning V-BAT aircraft to base.
+
+2.9.16Bingo Fuel
+The SWARM Hivemind shall be capable of calculating a bingo fuel level.
+
+2.9.17Horizontal Aircraft Separation
+The SWARM Hivemind shall be capable of maintaining a safe horizontal separation
+between aircraft.
+
+2.9.18Vertical Aircraft Separation
+The SWARM Hivemind shall be capable of maintaining a safe vertical separation
+between aircraft.
+
+2.9.19Altitude Limitations
+The SWARM Hivemind shall be capable of maintaining a safe altitude limit.
+
+2.9.20RF Jammer Identification
+The SWARM Hivemind shall allow for loading of a predefined RF Jammer signature
+lookup table.
+
+
+********************************************************************************
+2.9.21Level 2: Behavior Requirements
+********************************************************************************
+
+2.9.21.1 Maintain Agent Survivability
+The SWARM Hivemind Behavior shall prioritize aircraft safety and survivability.
+
+2.9.21.2 Threat Identification
+The SWARM Hivemind Behavior shall be capable of identifying a threat by means of
+comparison between detected RF Jammer parameters and a predefined lookup table.
+
+2.9.21.3 Maneuver Risk Assessment
+The SWARM Hivemind Behavior shall assess the risk rating of possible maneuvers.
+
+2.9.21.4 High Risk Maneuver Request
+The SWARM Hivemind Behavior shall request approval from the Operator(s) for
+maneuvers assessed to be High Risk.
+
+2.9.21.5 Maintain GCS Communication
+The SWARM Hivemind Behavior shall allow for tasking of an agent to maintain
+communication with the GCS.
+
+2.9.21.6 Maintain Target Coverage
+The SWARM Hivemind Behavior shall allow for tasking of an agent to maintain sensor
+coverage of a Target.
+
+2.9.21.7 Maintain Communications Bridge
+The SWARM Hivemind Behavior shall allow for tasking of an agent to maintain a
+communications bridge.
+
+2.9.21.8 Reestablish Comms via Agent Spacing
+In the presence of RF jamming, the SWARM Hivemind Behavior shall attempt to
+reestablish communication by reducing swam agent spacing.
+
+2.9.21.9 Reestablish Comms via RF Jammer Proximity
+In the presence of RF jamming, the SWARM Hivemind Behavior shall attempt to
+reestablish communication by directing agents away from the RF Jammer.
+
+2.9.21.10 Reestablish Comms via Optimization
+In the presence of RF jamming, the SWARM Hivemind Behavior shall attempt to
+reestablish communication via selection of singular or multiple agent behavior(s)
+based upon the performance metrics sought for optimization. 
+
+2.9.21.11 RF Jammer Collaborative Location
+In the presence of RF jamming, the SWARM Hivemind Behavior shall attempt to
+collaboratively locate the position of an RF Jammer. 
+
+
+********************************************************************************
+2.9.22Level 2: ES Sensor Requirements
+********************************************************************************
+
+2.9.22.1 ES Detection Ingest
+The SWARM Hivemind Sensing shall ingest detections from the ES payload.
+
+2.9.22.2 ES Detection Filtering
+The SWARM Hivemind Sensing shall filter the ES detections to reduce false alarm rate
+while maintaining acceptable probability of detection.
+
+2.9.22.3 ES Detection Publish
+The SWARM Hivemind Sensing shall publish ES detections to the consumer software
+blocks.
+
+2.9.22.4 ES Detection Record
+The SWARM Hivemind Sensing shall record ES detections to file for data logging and
+offline inspection.
+
+
+********************************************************************************
+2.9.23Level 2: Emitter Localization and Tracking Requirements
+********************************************************************************
+
+2.9.23.1 Bearing of Arrival ES Detection Ingest
+The SWARM Hivemind Emitter Localization and Tracking (ELT) shall ingest ES Bearing
+of Arrival measurements.
+
+2.9.23.2 TDOA ES Detection Ingest
+The SWARM Hivemind ELT shall ingest Time Difference of Arrival (TDOA) ES
+measurements.
+
+2.9.23.3 FDOA ES Detection Ingest
+The SWARM Hivemind ELT shall ingest Frequency Difference of Arrival (FDOA) ES
+measurements.
+
+2.9.23.4 Single Platform Bearing of Arrival Localization
+The SWARM Hivemind ELT shall localize and track an emitter solely via own-platform
+Bearing of Arrival ES measurements.
+
+2.9.23.5 Multi-Platform Bearing of Arrival Localization
+The SWARM Hivemind ELT shall fuse Bearing of Arrival ES measurements from
+multiple swarm platforms (agents) to produce multi-platform angle-only tracks.
+
+2.9.23.6 Multi-Platform TDOA+FDOA Localization
+The SWARM Hivemind ELT shall fuse multi-platform TDOA and FDOA measurements.
+
+2.9.23.7 Multi-Emitter Tracking
+The SWARM Hivemind ELT shall simultaneously track up to four (4) emitters.
+
+2.9.23.8 Ambiguous Intersection Tracking
+The SWARM ELT shall identify and track ambiguous measurement intersections.
+
+2.9.23.9 Ambiguous Intersection Disambiguation
+The SWARM Hivemind ELT shall disambiguate ambiguous ("ghost") track hypotheses.
+
+
+********************************************************************************
+2.10 Level 1: GCS Requirements
+********************************************************************************
+
+2.10.1Ground Control Station
+The SWARM UAS shall be controlled via a Ground Control Station (GCS).
+
+2.10.2Display V-BAT Location
+The SWARM GCS shall visually display the location of the V-BAT agent(s) to the
+Operator(s).
+
+2.10.3Display V-BAT Mission Plan
+The SWARM GCS shall visually display the respective flight plan for each V-BAT agent
+to the Operator(s).
+
+2.10.4Display V-BAT Communications Graph
+The SWARM GCS shall visually display the following communications network
+information to the Operator(s):
+• Number of V-BAT agents on the Radio Network
+• Radio Network B/W
+• Radio Network SNR
+• Agent A to Agent Z Connection (Yes/No)
+• Latency of previous message
+• Time stamp of message
+• Time to reestablish Radio Network
+
+2.10.5Display GCS Location
+The SWARM GCS shall visually display the GCS location to the Operator(s).
+
+2.10.6Display Jammer Location
+The SWARM GCS shall visually display the Jammer Location to the Operator(s).
+
+2.10.7Display Jammer Range
+The SWARM GCS shall visually display the Jammer Effective Range to the Operator(s). 
+
+2.10.8Display Jammer Identification
+The SWARM GCS shall visually display the identification of a Jammer to the
+Operator(s).
+
+2.10.9Display Jammer Confidence
+The SWARM GCS shall visually display the confidence rating of an identified Jammer to
+the Operator(s).
+
+2.10.10 Display Target Location
+The SWARM GCS shall visually display the Target Location to the Operator(s).
+
+2.10.11 Display Target Identification
+The SWARM GCS shall visually display the identification of a Target to the Operator(s).
+
+2.10.12 Display Target Confidence
+The SWARM GCS shall visually display the confidence rating of an identified Target to
+the Operator(s).
+
+2.10.13 Mission Plan Creation
+The SWARM GCS shall allow for the creation of new Mission Plans by an Operator(s).
+
+2.10.14 Mission Plan Import
+The SWARM GCS shall allow for the import of Mission Plans from an external source.
+
+2.10.15 Configure Radio
+The SWARM GCS shall support the configuration of the MPU5 radio.
+
+2.10.16 Configure Comms Loss Time
+The SWARM GCS shall allow the Operator(s) to set a limit on maximum
+communication loss time.
+
+2.10.17 Configure Bandwidth
+The SWARM GCS shall allow the Operator(s) to set a limit on minimum B/W.
+
+2.10.18 Configure Task Prioritization
+The SWARM GCS shall allow for the prioritization of tasks for the V-BAT agent(s) by the
+Operator(s).
+
+2.10.19 Configure Search Prioritization
+The SWARM GCS shall allow for the prioritization of search areas for the V-BAT
+agent(s) by the Operator(s).
+
+2.10.20 Configure Target Prioritization
+The SWARM GCS shall allow for the prioritization of targets for the V-BAT agent(s) by
+the Operator(s).
+
+2.10.21 High Risk Approval
+The SWARM GCS shall prompt the Operator(s) for approval of High Risk Missions, as
+requested by Hivemind
+
+
+********************************************************************************
+2.11 Level 1: Test Environment Requirements
+********************************************************************************
+
+2.11.1Simulated Test Environment
+The SWARM UAS shall support a Simulated Test Environment.
+
+2.11.2RF Jammer Simulation
+The Test Environment(s) shall feature RF Jammer(s).
+
+2.11.3Comms Simulation
+The Test Environment(s) shall feature a communications (comms) simulation model.
+
+2.11.4ES Sensor Simulation
+The Test Environment(s) shall feature an ES sensor simulation model.
+
+2.11.5RF Beampatterns
+The Test Environment(s) shall be capable of modeling 2-Dimesional beampatterns for
+simulated RF antennas.
+
+
+********************************************************************************
+2.11.6Level 2: RF Jammer Requirements
+********************************************************************************
+
+2.11.6.1 RF Jammer Instances
+The SWARM RF Jammer functionality shall support the concurrent operation of up to
+two (2) RF Jammer sources.
+
+2.11.6.2 RF Jammer Static
+The SWARM RF Jammer shall be static upon selection of RF Jammer location.
+
+2.11.6.3 RF Jammer Frequency
+The SWARM RF Jammer frequency shall be in-band with that of the V-BAT radio
+network.
+
+2.11.6.4 RF Jammer Barrage
+The SWARM RF Jammer shall use the Barrage Jamming technique.
+
+2.11.6.5 RF Jammer Location Management
+The SWARM RF Jammer shall support changing the location of the Comms Jammer
+source.
+
+2.11.6.6 RF Jammer Enable/Disable
+The SWARM RF Jammer shall allow for enabling and disabling of the RF Jammer.
+
+2.11.6.7 RF Jammer Power Level Management
+The SWARM RF Jammer shall operate at a power level of 40 W.
+
+
+********************************************************************************
+2.11.7Level 2: Simulation Environment Requirements
+********************************************************************************
+
+2.11.7.1 AFSIM Environment
+The SWARM Simulation environment shall be AFSIM 2.9.0.
+
+2.11.7.2 Simulation Container
+The SWARM Simulation environment shall run inside an Ubuntu 20.04 Docker
+container.
+
+2.11.7.3 Simulation Docker
+The SWARM Simulation environment Docker Container shall be able to communicate
+outside its container user ports.
+
+2.11.7.4 Simulation Platform Movement
+The SWARM Simulation environment shall allow the movement of any platform at
+runtime.
+
+2.11.7.5 Simulation Scenario
+The SWARM Simulation environment shall allow a user to modify the scenario.
+
+2.11.7.6 Simulation Network Configuration
+The SWARM Simulation environment's network connections shall be configurable
+offline.
+
+2.11.7.7 Simulation Update Rates
+The SWARM Simulation Environment update rates for data processing shall be
+configurable offline.
+
+2.11.7.8 Simulation Enable/Disable
+The SWARM Simulation environment shall allow the operator to enable or disable a RF
+Jammer at runtime.
+
+
+********************************************************************************
+2.11.8Level 2: ES Payload Sensor Model
+********************************************************************************
+
+2.11.8.1 ES Sensor Model Bearing of Arrival
+The ES Sensor Model shall be capable of modeling Bearing of Arrival (BOA)
+measurements.
+
+2.11.8.2 ES Sensor Model TDOA+FDOA
+The ES Sensor Model shall be capable of modeling TDOA and FDOA measurements.
+
+2.11.8.3 ES Sensor Model Angle Bias
+The ES Sensor Model shall be capable of modeling the BOA bias that is static (T) or
+time-varying (O).
+
+2.11.8.4 ES Sensor Model Measurement Precision
+The ES Sensor Model shall be capable of modeling the BOA precision (measurement
+"noise") that is pre-programmed (T) or commensurate with the aperture size and
+signal power (O).
+
+2.11.8.5 ES Sensor Model Resolvability
+The ES Sensor Model will be capable of modeling the measurement space resolvability
+of ES measurements.
+
+2.11.8.6 ES Sensor Model Probability of Detection
+The ES Sensor Model will be capable of modeling the probability of detection.
+
+2.11.8.7 ES Sensor Model False Alarms
+The ES Sensor Model will be capable of modeling false alarm measurements.
+
+
+********************************************************************************
+2.11.9Level 2: Comms Model
+********************************************************************************
+
+2.11.9.1 Comms Throughput Model
+The Comms Model shall be able to model Inter-Agent communications data
+throughput as a binary in/out of communications (T) or a continuous function of SINR
+(O).
+
+
+********************************************************************************
+2.11.10 Level 2: Physical Testing Requirements
+********************************************************************************
+
+
+********************************************************************************
+3 Assumptions
+********************************************************************************
+
+3.1 V-BAT Priorty
+The SWARM V-BAT shall prioritize behaviors as follows;
+• Priority 1: Aircraft Survivability (Threshold)
+• Priority 2: Aircraft Communications Resilience (Threshold)
+• Priority 3: Electronic Support Sensor Optimization (Objective)
+
+3.2 V-BAT Agent A
+The SWARM V-BAT shall define 'Agent A' as the V-BAT prioritizing connection to the
+Ground Controls Station (GCS).
+
+3.3 V-BAT Agent N
+The SWARM V-BAT shall define 'Agent N(s)' as the V-BAT(s) prioritizing RF connectivity
+between Agent A and Agent Z.
+
+3.4 V-BAT Agent Z
+The SWARM V-BAT shall define 'Agent Z' as the V-BAT prioritizing image/location of
+the Target of Interest.
+
+
+
+
+
+
+con-ops / scenarios list
+--------------------------------------------------------------------------------
+1. Real world operational context:
+  -https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+  -slide 15
+  -Target acquisition in contested RF environment
+
+2. Scenario 1: Area Search
+  -https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+  -slide 16
+  -10 vbats
+  -no jammers detected
+
+  Autonomous
+  -Determine search area
+  -Determine number of V-BATs available
+  -Optimize search pattern for ESM sensor performance
+  -Optimize search pattern for comms bridge
+
+  Operator Input
+  -Change search area
+  -Select between comms bridge latency and track precision
+
+3. Scenario 2: Jamming Detected
+  -https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+  -slide 17
+  -10x V-BATs
+  -Multiple stationary jammers detected
+
+  Autonomous
+  -V-BATs detect jammer
+
+  Operator Input
+  -Change search area
+  -Select between comms bridge latency and track precision
+
+4. Scenario 3: Intelligent Comms & Survivability
+  -https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+  -slide 18
+  -10x V-BATs
+  -Multiple stationary jammers detected
+
+  Autonomous
+  -V-BATs maneuver down SINR gradient for enhanced communications and survivability
+  -V-BATs begin sharing jammer detection information
+  -Optimize position for comms bridge
+
+  Operator Input
+  -Change search area
+  -Select between comms bridge latency and track precision
+  -Change emitter priority
+
+5. SIM2 Storyboard: Jammer Localization / Target Track
+  -https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+  -slide 19
+  -10x V-BATs
+  -Multiple stationary jammers detected
+
+  Autonomous
+  -Report ESM detection (LOB), switch from Search to Fix
+  -Coordinate target location (LOBs -> triangulation)
+  -Optimize position for ESM localization
+  -Optimize position for comms bridge
+
+  Operator Input
+  -Change search area
+  -Select between comms bridge latency and track precision
+  -Change emitter priority
+
+6. SIM2 Storyboard: Long Range Fires Suppress Jamming
+  -https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+  -slide 20
+  -10x V-BATs
+  -Multiple stationary jammers detected
+  -Long range fires employed
+
+  Autonomous
+  -Target tracks are passed via GCS to long range fires
+  -Long range fires suppress jammer threat
+  -V-BATs confirm loss of jammer detection
+
+  Operator Input
+  -Change search area
+  -Select between comms bridge latency and track precision
+  -Change emitter priority
+
+7. SIM2 Storyboard: Prosecute Deeper Emitters
+  -https://aiformaneuver.sharepoint.us/:p:/s/AFWERXSWARM/EbQXyKC-Io5KomvSUrUMQGUBzTV1teTd531Hl7KgCaidJA?e=M4GHpr&wdOrigin=TEAMS-WEB.p2p.p2p&wdExp=TEAMS-CONTROL&wdhostclicktime=1699900899398&web=1
+  -slide 21
+  -10x V-BATs
+  -Additional jammer detected
+  -Multiple stationary non-jammer target emitters detected
+
+  Autonomous
+  -V-BATs switch from Fix back to Search
+  -Detect new jammers and target emitters
+  -Coordinate target location (LOBs -> triangulation)
+  -Optimize position for ESM localization
+  -Optimize position for comms bridge
+
+  Operator Input
+  -Change search area
+  -Select between comms bridge latency and track precision
+  -Change emitter priority
+
+I think a representative set of dimensions that meets the customer intent here
+is probably something like 30nm between the FLOT and the first line of jammers,
+with a operational area "width" of maybe 50nm (25nm left and right of the launch
+point). I'd expect that for "second order" targets, that could extend to maybe
+50nm.
+- Chris Swigart
+
+
+
+
+
+
+
+
+
+
+
+test matrix
+--------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+metrix / pass/fail criteria
+--------------------------------------------------------------------------------
