@@ -1,5 +1,0 @@
-- sim1 test plan raise concern about 3 more test plans
-- assumed chab was spinning my wheels on simcore not supporting loitering
-- assumed chab took a long time to fix the orientation issue withs simcore
-- said we were doing something weird in the state estimation block
-  - said "we" didn't do that
