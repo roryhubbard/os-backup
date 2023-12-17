@@ -33,6 +33,9 @@ sudo apt install tmux -y
 # venv
 sudo apt install python3-venv
 
+# neofetch
+sudo apt install neofetch
+
 # fzf
 sudo apt install fzf
 mkdir -p ~/.config/fish/functions/
