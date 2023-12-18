@@ -12,8 +12,6 @@ sudo add-apt-repository ppa:neovim-ppa/unstable -y
 sudo apt update -y
 sudo apt install neovim -y
 
-# cargo
-curl https://sh.rustup.rs -sSf | sh
 
 # cmake 
 sudo apt install cmake
@@ -21,11 +19,8 @@ sudo apt install cmake
 # fontconfig
 sudo apt install libfontconfig1-dev
 
-# alacritty
-cargo install alacritty
-
-# julia
-cargo install juliaup
+# go
+sudo apt install golang-go -y
 
 # tmux
 sudo apt install tmux -y
@@ -40,6 +35,15 @@ sudo apt install neofetch
 sudo apt install fzf
 mkdir -p ~/.config/fish/functions/
 echo fzf_key_bindings > ~/.config/fish/functions/fish_user_key_bindings.fish
+
+# cargo
+curl https://sh.rustup.rs -sSf | sh
+
+# alacritty
+cargo install alacritty
+
+# julia
+cargo install juliaup
 
 # oh my fish
 curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
