@@ -40,7 +40,7 @@ echo fzf_key_bindings > ~/.config/fish/functions/fish_user_key_bindings.fish
 curl https://sh.rustup.rs -sSf | sh
 
 # alacritty
-cargo install alacritty
+cargo install alacritty@0.13.0-rc1
 
 # julia
 cargo install juliaup
