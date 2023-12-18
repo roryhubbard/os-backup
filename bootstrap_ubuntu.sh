@@ -31,6 +31,9 @@ sudo apt install python3-venv
 # neofetch
 sudo apt install neofetch
 
+# ripgrep
+sudo apt install ripgrep
+
 # fzf
 sudo apt install fzf
 mkdir -p ~/.config/fish/functions/
