@@ -2,7 +2,7 @@ if status is-interactive
     # Commands to run in interactive sessions can go here
 end
 
-fish_add_path /home/chub/.autojump/share/autojump/autojump.fish
+source "$HOME/.autojump/share/autojump/autojump.fish"
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
