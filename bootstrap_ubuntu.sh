@@ -12,12 +12,11 @@ sudo add-apt-repository ppa:neovim-ppa/unstable -y
 sudo apt update -y
 sudo apt install neovim -y
 
-
 # cmake 
-sudo apt install cmake
+sudo apt install cmake -y
 
 # fontconfig
-sudo apt install libfontconfig1-dev
+sudo apt install libfontconfig1-dev -y
 
 # go
 sudo apt install golang-go -y
@@ -26,16 +25,21 @@ sudo apt install golang-go -y
 sudo apt install tmux -y
 
 # venv
-sudo apt install python3-venv
+sudo apt install python3-venv -y
 
 # neofetch
-sudo apt install neofetch
+sudo apt install neofetch -y
 
 # ripgrep
-sudo apt install ripgrep
+sudo apt install ripgrep -y
+
+# fd
+sudo apt install fd-find -y
+mkdir --parents ~/.local/bin
+ln -s $(which fdfind) ~/.local/bin/fd
 
 # fzf
-sudo apt install fzf
+sudo apt install fzf -y
 mkdir -p ~/.config/fish/functions/
 echo fzf_key_bindings > ~/.config/fish/functions/fish_user_key_bindings.fish
 
@@ -86,10 +90,11 @@ omf install nvm
 nvm install node
 
 # source fish config
-. ~/.config/fish/config.fish
+source ~/.config/fish/config.fish
 
 # dont acivate base conda environment on startup
 conda config --set auto_activate_base false
 
 # create python environment that has github cli
 conda create -n gh -c conda-forge gh -y
+
